@@ -1,0 +1,115 @@
+# =============================================
+# Java / Maven / Spring Boot
+# =============================================
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven target directory
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Maven dependency reduced pom
+**/dependency-reduced-pom.xml
+
+# Gradle (if used)
+.gradle/
+**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# =============================================
+# IDE - IntelliJ IDEA
+# =============================================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# =============================================
+# IDE - VS Code
+# =============================================
+.vscode/
+*.code-workspace
+
+# =============================================
+# IDE - Eclipse
+# =============================================
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+bin/
+
+# =============================================
+# Playwright / Node.js (if any frontend tooling)
+# =============================================
+node_modules/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+test-results/
+
+# =============================================
+# OS generated files
+# =============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =============================================
+# Logs
+# =============================================
+*.log
+logs/
+
+# =============================================
+# Application
+# =============================================
+
+# Generated PDFs (test outputs)
+test_report*.pdf
+
+# Local configuration overrides
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+
+# =============================================
+# Environment / Secrets
+# =============================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# =============================================
+# Temporary files
+# =============================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

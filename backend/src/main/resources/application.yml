@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: playwright-report-service
+  thymeleaf:
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+
+# CORS 配置（允许前端跨域访问）
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"
+  allowed-headers: "*"
+
+# Playwright 配置
+playwright:
+  # 是否使用系统已安装的 Chrome（而不是下载）
+  use-system-browser: false
+  # PDF 生成超时（毫秒）
+  pdf-timeout: 30000
