@@ -35,6 +35,16 @@
             text-decoration: none;
         }
         .btn:hover { background: #1e3d6e; }
+        .btn-secondary {
+            background: #52c41a;
+            margin-top: 12px;
+        }
+        .btn-secondary:hover { background: #389e0d; }
+        .btn-tertiary {
+            background: #fa8c16;
+            margin-top: 12px;
+        }
+        .btn-tertiary:hover { background: #d46b08; }
         .note {
             margin-top: 24px;
             font-size: 12px;
@@ -44,12 +54,22 @@
 </head>
 <body>
     <div class="card">
-        <h1>销售报表下载</h1>
-        <p>点击下方按钮下载 PDF 报表</p>
+        <h1>精力配置洞察报告</h1>
+        <p>点击下方按钮获取报表数据</p>
 
-        <!-- 方式一：直接用 a 标签下载 -->
+        <!-- 下载 PDF 报表 -->
         <a class="btn" href="http://localhost:8080/api/schedule/report/download" download>
-            下载 PDF 报表
+            下载报表
+        </a>
+
+        <!-- 查看原始 JSON 数据 -->
+        <a class="btn btn-secondary" href="http://localhost:8080/api/schedule/report/json" target="_blank">
+            查看JSON数据
+        </a>
+
+        <!-- 浏览器预览报表 -->
+        <a class="btn btn-tertiary" href="http://localhost:8080/api/schedule/report/html" target="_blank">
+            直接预览报表页面
         </a>
 
         <p class="note">

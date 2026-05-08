@@ -36,7 +36,7 @@
             color: #666;
         }
 
-        /* ========== 第一部分：概览 ========== */
+        /* ========== 章节 ========== */
         .section {
             margin-bottom: 20px;
         }
@@ -89,94 +89,33 @@
             line-height: 1.8;
         }
 
-        /* ========== 第二部分：图表分析 ========== */
+        /* ========== 图表 ========== */
         .chart-container {
             width: 100%;
             height: 200px;
             margin: 8px 0;
         }
-
-        /* 关键洞察 */
-        .insight-box {
-            background: #fff8e6;
-            border: 1px solid #ffd591;
-            border-radius: 4px;
-            padding: 10px 14px;
-            margin: 12px 0;
+        .chart-container > div {
+            left: 50%;
+            transform: translate(-50%, -50%);
+            top: 50%;
         }
-        .insight-label {
-            font-weight: bold;
-            color: #d46b08;
-            font-size: 10pt;
-            margin-bottom: 4px;
+        #donutChart {
+            height: 460px;
         }
-        .insight-text {
-            color: #555;
-            font-size: 9.5pt;
-            line-height: 1.7;
+        #lineChart {
+            width: 75%;
+            height: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* ========== 第三部分：问题与建议 ========== */
-        .problem-item {
-            margin-bottom: 12px;
-            padding-left: 14px;
-            position: relative;
-        }
-        .problem-item::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 7px;
-            width: 5px;
-            height: 5px;
-            background: #f5222d;
-            border-radius: 50%;
-        }
-        .problem-title {
-            font-weight: bold;
-            color: #1a1a1a;
+        /* 问题与建议文本 */
+        .text-content {
+            color: #444;
             font-size: 10pt;
-            margin-bottom: 2px;
-        }
-        .problem-content {
-            color: #555;
-            font-size: 9.5pt;
-            line-height: 1.6;
-        }
-
-        .suggestion-item {
-            margin-bottom: 12px;
-            padding-left: 14px;
-            position: relative;
-        }
-        .suggestion-item::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 7px;
-            width: 5px;
-            height: 5px;
-            background: #52c41a;
-            border-radius: 50%;
-        }
-        .suggestion-title {
-            font-weight: bold;
-            color: #1a1a1a;
-            font-size: 10pt;
-            margin-bottom: 4px;
-        }
-        .suggestion-detail {
-            color: #555;
-            font-size: 9.5pt;
-            line-height: 1.6;
-            padding-left: 10px;
-            position: relative;
-        }
-        .suggestion-detail::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #52c41a;
+            line-height: 1.8;
+            padding: 8px 0;
         }
 
         /* 免责声明 */
@@ -207,7 +146,7 @@
 
 <!-- ========== 第一部分：精力健康度概览 ========== -->
 <div class="section">
-    <div class="section-title">一、精力健康度概览</div>
+    <div class="section-title">精力健康度概览</div>
 
     <div class="score-section">
         <div class="score-circle">
@@ -216,111 +155,90 @@
         </div>
     </div>
 
-    <div class="summary-box" th:text="${data.summaryText}">
-        45%用于会议审批（低效会议占比38%），仅28%聚焦客户开发...
-    </div>
+    <p th:text="${data.精力总结}">精力总结...</p>
 </div>
 
 <!-- ========== 第二部分：时间分配与职责匹配度分析 ========== -->
 <div class="section">
-    <div class="section-title">二、时间分配与职责匹配度分析</div>
-
-    <!-- 环形图 -->
+    <div class="section-title">时间分配与职责匹配度分析</div>
     <div id="donutChart" class="chart-container"></div>
-
-    <!-- 折线图 -->
     <div id="lineChart" class="chart-container"></div>
+    <p style="text-align: center; font-style: italic; color: #666; font-size: 10pt; margin-top: 8px;" th:text="'关键洞察：' + ${data.关键洞察}">关键洞察：...</p>
+</div>
 
-    <!-- 关键洞察 -->
-    <div class="insight-box">
-        <div class="insight-label">关键洞察</div>
-        <div class="insight-text" th:text="${data.keyInsight}">
-            团队管理职责要求35%时间，实际仅22%（缺口13%）...
-        </div>
+<!-- ========== 第三部分：问题诊断与风险预警 ========== -->
+<div class="section">
+    <div class="section-title">问题诊断与风险预警</div>
+    <div class="text-content" th:text="${data.问题诊断与风险预警}">
+        问题诊断...
     </div>
 </div>
 
-<!-- ========== 第三部分：问题诊断与精力平衡建议 ========== -->
+<!-- ========== 第四部分：精力平衡建议 ========== -->
 <div class="section">
-    <div class="section-title">三、问题诊断与精力平衡建议</div>
-
-    <!-- 问题诊断 -->
-    <div th:each="problem, iter : ${data.problems}" class="problem-item">
-        <div class="problem-title">
-            <span th:text="${iter.count}">1</span>、<span th:text="${problem.title}">时间碎片化</span>
-        </div>
-        <div class="problem-content" th:text="${problem.content}">
-            平均会议时长25分钟...
-        </div>
-    </div>
-
-    <!-- 精力平衡建议 -->
-    <div style="margin-top: 16px;">
-        <div style="font-weight: bold; font-size: 10pt; color: #1a1a1a; margin-bottom: 8px;">精力平衡建议</div>
-        <div th:each="suggestion, iter : ${data.suggestions}" class="suggestion-item">
-            <div class="suggestion-title">
-                <span th:text="${iter.count}">1</span>、<span th:text="${suggestion.title}">时间投资建议</span>
-            </div>
-            <div th:each="detail : ${suggestion.details}" class="suggestion-detail" th:text="${detail}">
-                建议内容...
-            </div>
-        </div>
+    <div class="section-title">精力平衡建议</div>
+    <div class="text-content" th:text="${data.精力平衡建议}">
+        精力平衡建议...
     </div>
 </div>
 
 <!-- ========== 免责声明 ========== -->
-<div class="disclaimer" th:text="${data.disclaimer}">内容由AI生成，仅供参考</div>
+<div class="disclaimer">内容由AI生成，仅供参考</div>
 
 <!-- ==================== 数据注入 ==================== -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var chartData = {
-        businessItems: /*[[${data.businessItems}]]*/ [],
-        dutyComparisons: /*[[${data.dutyComparisons}]]*/ []
+    const chartData = {
+        业务类别占比: /*[[${data.业务类别占比}]]*/ [],
+        职责对比: /*[[${data.职责对比}]]*/ []
     };
     /*]]>*/
 </script>
 
 <!-- ==================== ECharts 初始化 ==================== -->
 <script>
-    // ---------- 环形图：时间分配 ----------
-    var donutChart = echarts.init(document.getElementById('donutChart'));
-    var donutData = chartData.businessItems.map(function(item) {
-        return { name: item.name, value: item.actualValue };
+    // ---------- 环形图：业务类别占比 ----------
+    const donutChart = echarts.init(document.getElementById('donutChart'));
+    const donutData = chartData.业务类别占比.map(function(item) {
+        const key = Object.keys(item)[0];
+        return { name: key, value: item[key] };
     });
     donutChart.setOption({
-        tooltip: { trigger: 'item', formatter: '{b}: {c}小时 ({d}%)' },
-        legend: { orient: 'vertical', right: 8, top: 'center', textStyle: { fontSize: 9 } },
+        animation: false,
+        tooltip: { trigger: 'item', formatter: '{b}: {c}% ({d}%)' },
         series: [{
-            name: '实际投入',
+            name: '业务类别',
             type: 'pie',
-            radius: ['40%', '65%'],
-            center: ['35%', '50%'],
+            radius: ['35%', '75%'],
+            center: ['50%', '50%'],
             avoidLabelOverlap: true,
             itemStyle: { borderRadius: 3, borderColor: '#fff', borderWidth: 2 },
-            label: { show: true, formatter: '{b}\n{c}', fontSize: 9 },
-            emphasis: { label: { show: true, fontSize: 11, fontWeight: 'bold' } },
+            label: { show: true, formatter: '{b}\n{c}%', fontSize: 14 },
+            emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
             data: donutData,
             color: ['#2c5aa0', '#4a90d9', '#7ab8f5', '#a8d4f7', '#d6e9f7']
         }]
     });
 
     // ---------- 折线图：职责对比 ----------
-    var lineChart = echarts.init(document.getElementById('lineChart'));
-    var dutyNames = chartData.dutyComparisons.map(function(item) { return item.dutyName; });
-    var actualValues = chartData.dutyComparisons.map(function(item) { return item.actualValue; });
-    var idealValues = chartData.dutyComparisons.map(function(item) { return item.idealValue; });
+    const lineChart = echarts.init(document.getElementById('lineChart'));
+    const dutyData = chartData.职责对比;
+    const categories = dutyData.map(function(item) { return item.name; });
+    const actualValues = dutyData.map(function(item) { return item.actual; });
+    const idealValues = dutyData.map(function(item) { return item.ideal; });
+
     lineChart.setOption({
+        animation: false,
         tooltip: { trigger: 'axis' },
-        legend: { data: ['实际投入', '理想状态'], top: 0, textStyle: { fontSize: 9 } },
+        legend: { data: ['实际投入', '理想状态'], top: 0, textStyle: { fontSize: 14 } },
         grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
-        xAxis: { type: 'category', boundaryGap: false, data: dutyNames, axisLabel: { fontSize: 9 } },
-        yAxis: { type: 'value', axisLabel: { fontSize: 9 } },
+        xAxis: { type: 'category', boundaryGap: false, data: categories, axisLabel: { fontSize: 14 } },
+        yAxis: { type: 'value', axisLabel: { fontSize: 14 } },
         series: [
-            { name: '实际投入', type: 'line', smooth: true, symbol: 'circle', symbolSize: 5,
+            { name: '实际投入', type: 'line', symbol: 'circle', symbolSize: 6,
               lineStyle: { width: 2, color: '#2c5aa0' }, itemStyle: { color: '#2c5aa0' }, data: actualValues },
-            { name: '理想状态', type: 'line', smooth: true, symbol: 'circle', symbolSize: 5,
-              lineStyle: { width: 2, color: '#52c41a', type: 'dashed' }, itemStyle: { color: '#52c41a' }, data: idealValues }
+            { name: '理想状态', type: 'line', symbol: 'circle', symbolSize: 6,
+              lineStyle: { width: 2, color: '#52c41a' }, itemStyle: { color: '#52c41a' }, data: idealValues }
         ]
     });
 

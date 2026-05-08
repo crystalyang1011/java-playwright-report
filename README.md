@@ -8,12 +8,14 @@
 
 生成的 PDF 包含：
 
-- 报表标题与统计周期
-- 统计卡片（总销量、总销售额、平均单价）
-- **ECharts 销售趋势图**（折线图 + 柱状图）
-- **ECharts 分类占比图**（环形饼图）
-- 销售明细数据表格
-- 合计行与页脚
+- 报告标题、被分析人、部门
+- 精力健康度评分
+- **ECharts 业务类别占比图**（环形饼图）
+- **ECharts 职责对比图**（折线图）
+- 精力总结文本
+- 问题诊断与风险预警
+- 精力平衡建议
+- 免责声明
 
 ## 技术架构
 
@@ -40,8 +42,7 @@ java-playwright-report/
 │   │   ├── controller/
 │   │   │   └── ReportController.java # REST API
 │   │   ├── dto/
-│   │   │   ├── ReportData.java       # 报表数据 DTO
-│   │   │   └── SalesRecord.java      # 销售记录 DTO
+│   │   │   └── ReportData.java       # 报表数据 DTO
 │   │   ├── service/
 │   │   │   └── ReportService.java    # 数据生成 + PDF 生成
 │   │   └── PlaywrightReportApplication.java
@@ -51,29 +52,25 @@ java-playwright-report/
 │   │   └── application.yml
 │   └── pom.xml
 │
-└── demo.html                         # 纯 HTML 前端示例（一个下载按钮）
+├── demo.html                         # 纯 HTML 前端示例
+├── TODO.md                           # 前后端接口对接文档
+└── README.md                         # 本文档
 ```
 
 ## 环境准备
 
-### Java 17
+### Java
 
-已内置在 `C:\java\jdk-17`，环境变量已配置：
-- `JAVA_HOME = C:\java\jdk-17`
-- `PATH` 包含 `%JAVA_HOME%\bin`
+系统当前安装的是 **Java 25**（Eclipse Temurin）。项目 `pom.xml` 中指定编译目标为 Java 17，Java 25 向下兼容可正常编译运行。
 
 验证：
 ```bash
 java -version
 ```
 
-### Maven 3.9.6
+### Maven
 
-已内置在 `C:\java\apache-maven-3.9.6`，环境变量已配置：
-- `MAVEN_HOME = C:\java\apache-maven-3.9.6`
-- `PATH` 包含 `%MAVEN_HOME%\bin`
-
-**已配置阿里云镜像**，依赖下载更快。配置位置：`C:\java\apache-maven-3.9.6\conf\settings.xml`
+已安装 Maven 3.8.8。
 
 验证：
 ```bash
@@ -92,12 +89,7 @@ Playwright 依赖 Chromium，执行一次即可：
 ```bash
 cd backend
 
-# 在 PowerShell 中设置环境变量后执行
-$env:JAVA_HOME = 'C:\java\jdk-17'
-$env:MAVEN_HOME = 'C:\java\apache-maven-3.9.6'
-$env:PATH = "$env:PATH;C:\java\jdk-17\bin;C:\java\apache-maven-3.9.6\bin"
-$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
-
+# 在 PowerShell 中执行
 mvn exec:java -e '-Dexec.mainClass=com.microsoft.playwright.CLI' '-Dexec.args=install chromium'
 ```
 
@@ -109,23 +101,16 @@ Chromium 将安装在 `%USERPROFILE%\AppData\Local\ms-playwright\chromium-1091`
 
 ```bash
 cd backend
-
-# PowerShell 中先设置环境变量
-$env:JAVA_HOME = 'C:\java\jdk-17'
-$env:MAVEN_HOME = 'C:\java\apache-maven-3.9.6'
-$env:PATH = "$env:PATH;C:\java\jdk-17\bin;C:\java\apache-maven-3.9.6\bin"
-$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
-
 mvn spring-boot:run
 ```
 
 日志出现 `Tomcat started on port 8080` 和 `Playwright 浏览器初始化完成` 即表示成功。
 
-### 2. 测试下载
+### 2. 测试
 
 **方式一：浏览器打开 demo.html**
 
-直接用浏览器打开 `demo.html` 文件，点击下载按钮。
+直接用浏览器打开 `demo.html` 文件，点击"下载 PDF 报表"或"查看原始 JSON 数据"。
 
 **方式二：curl 命令**
 
@@ -139,12 +124,20 @@ curl http://localhost:8080/api/schedule/report/download -o report.pdf
 http://localhost:8080/api/schedule/report/download
 ```
 
+**方式四：调试报表模板（推荐开发时使用）**
+
+```
+http://localhost:8080/api/schedule/report/html
+```
+
+直接返回渲染后的 HTML 页面，可实时预览报表效果。修改 `report.html` 后刷新页面即可，无需下载 PDF。
+
 ## API 接口
 
 | 接口 | 方法 | 说明 |
 |------|------|------|
-| `/api/schedule/report-data` | GET | 获取报表 JSON 数据（调试用） |
-| `/api/schedule/report` | POST | 接收 JSON 数据生成 PDF |
+| `/api/schedule/report/json` | GET | 获取报表原始 JSON 数据（调试用） |
+| `/api/schedule/report/html` | GET | **调试接口**：直接返回渲染后的 HTML 页面 |
 | `/api/schedule/report/download` | GET | **一键生成并下载 PDF**（推荐） |
 
 ## 工作原理
@@ -161,7 +154,7 @@ Thymeleaf 渲染 HTML 模板（report.html）
     ↓  document.body.setAttribute('data-charts-ready', 'true')
 Playwright 启动 Chromium（无头模式）
     ↓
-等待页面加载完成 + ECharts 渲染完成
+固定视口 1400x900，等待页面加载 + ECharts 渲染完成
     ↓
 生成 A4 尺寸 PDF
     ↓
@@ -178,24 +171,30 @@ String html = templateEngine.process("report", context);
 
 // 2. Playwright 截图生成 PDF
 Page page = browserContext.newPage();
+page.setViewportSize(1400, 900);  // 固定视口，确保渲染结果稳定
 page.setContent(html);
 page.waitForLoadState(LoadState.NETWORKIDLE);
 
-// 3. 等待 ECharts 渲染完成
+// 3. 等待 ECharts 渲染完成（动画已关闭）
 page.waitForFunction("document.body.getAttribute('data-charts-ready') === 'true'");
-page.waitForTimeout(800);
+page.waitForTimeout(1500);
 
 // 4. 输出 PDF
 byte[] pdf = page.pdf(new Page.PdfOptions()
     .setFormat("A4")
     .setPrintBackground(true)
+    .setMargin(new Margin()
+        .setTop("12mm")
+        .setBottom("12mm")
+        .setLeft("12mm")
+        .setRight("12mm"))
 );
 ```
 
 **中文文件名编码（ReportController.java）**：
 
 ```java
-String filename = URLEncoder.encode("销售报表_xxx.pdf", StandardCharsets.UTF_8)
+String filename = URLEncoder.encode("精力配置洞察报告_xxx.pdf", StandardCharsets.UTF_8)
     .replace("+", "%20");
 headers.add(HttpHeaders.CONTENT_DISPOSITION, 
     "attachment; filename*=UTF-8''" + filename);
@@ -209,22 +208,21 @@ headers.add(HttpHeaders.CONTENT_DISPOSITION,
 
 - 修改 CSS 样式
 - 调整 ECharts 图表类型和配置
-- 添加/删除表格列
+- 调整章节结构
+
+**调试技巧**：开发时访问 `http://localhost:8080/api/schedule/report/html` 实时预览，调完再下载 PDF 验证。
 
 ### 替换为真实数据
 
-修改 `ReportService.generateMockData()`，接入数据库：
+修改 `ReportService.generateMockData()`，接入数据库或 AI 服务：
 
 ```java
 // 原来是生成模拟数据
 public ReportData generateMockData() { ... }
 
-// 改为从数据库查询
-@Autowired
-private SalesRecordRepository repository;
-
-public ReportData generateReportData(LocalDate start, LocalDate end) {
-    List<SalesRecord> records = repository.findByDateBetween(start, end);
+// 改为从数据库/AI 接口查询
+public ReportData generateReportData(String personId, String month) {
+    // 查询数据库或调用 AI 接口
     // ... 组装 ReportData
 }
 ```
@@ -246,8 +244,8 @@ page.pdf(new Page.PdfOptions()
     .setFormat("A4")        // A4, Letter, Legal 等
     .setLandscape(true)     // 横向
     .setMargin(new Margin()
-        .setTop("15mm")
-        .setBottom("15mm")
+        .setTop("12mm")
+        .setBottom("12mm")
         .setLeft("12mm")
         .setRight("12mm"))
 );
@@ -257,7 +255,7 @@ page.pdf(new Page.PdfOptions()
 
 ### Q: 后端启动时提示 mvn 不是命令
 
-PowerShell 需要设置环境变量（见「启动后端」步骤），或者**重启 PowerShell** 使环境变量生效。
+PowerShell 需要设置环境变量，或者**重启 PowerShell** 使环境变量生效。
 
 ### Q: Playwright 尝试下载 Firefox/WebKit
 
@@ -270,6 +268,12 @@ CorsConfig 已配置 `allowedOriginPatterns("*")`，任意前端均可访问。
 ### Q: 中文文件名乱码
 
 已使用 `filename*=UTF-8''` RFC 5987 编码，支持所有浏览器。
+
+### Q: PDF 中图表和浏览器预览不一致
+
+原因是 Playwright 默认视口（1280px）和你的浏览器宽度（如 1920px）不同，导致 ECharts 自动调整布局。
+
+**已修复**：`ReportService.java` 中固定了 `page.setViewportSize(1400, 900)`，PDF 渲染有稳定的宽度基准。同时 ECharts 关闭了动画（`animation: false`），避免截图截到动画中途的残影。
 
 ### Q: 前端可以是任何技术栈吗？
 

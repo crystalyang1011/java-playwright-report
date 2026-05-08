@@ -3,20 +3,18 @@ package com.example.report.config;
 import com.microsoft.playwright.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Playwright 浏览器管理配置
- * 应用启动时初始化浏览器实例，关闭时释放资源
- */
-@Slf4j
 @Configuration
 public class PlaywrightConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(PlaywrightConfig.class);
 
     @Value("${playwright.use-system-browser:false}")
     private boolean useSystemBrowser;
@@ -28,7 +26,6 @@ public class PlaywrightConfig {
     public void init() {
         log.info("正在初始化 Playwright 浏览器...");
         try {
-            // 跳过自动下载其他浏览器，只使用已安装的 Chromium
             System.setProperty("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "true");
             
             playwright = Playwright.create();
@@ -41,7 +38,6 @@ public class PlaywrightConfig {
                             "--disable-gpu"
                     ));
 
-            // 优先使用已下载的 Playwright Chromium
             Path playwrightChromium = findPlaywrightChromium();
             if (playwrightChromium != null) {
                 launchOptions.setExecutablePath(playwrightChromium);
@@ -82,9 +78,6 @@ public class PlaywrightConfig {
         return browser;
     }
 
-    /**
-     * 查找 Playwright 已下载的 Chromium 路径
-     */
     private Path findPlaywrightChromium() {
         String userHome = System.getProperty("user.home");
         String[] possiblePaths = {
@@ -102,9 +95,6 @@ public class PlaywrightConfig {
         return null;
     }
 
-    /**
-     * 查找系统中已安装的 Chrome 路径
-     */
     private Path findChromePath() {
         String[] possiblePaths = {
             "C:/Program Files/Google/Chrome/Application/chrome.exe",

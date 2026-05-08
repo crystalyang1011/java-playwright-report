@@ -1,51 +1,67 @@
 package com.example.report.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
+import java.util.Map;
 
-/**
- * 精力配置洞察报告数据 DTO
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class ReportData {
 
-    /** 报告标题，如：管理者精力配置洞察报告 – 2025年3月 */
     private String title;
-
-    /** 被分析人，如：张总监 */
     private String analyzedPerson;
-
-    /** 部门，如：销售部 */
     private String department;
-
-    /** 精力健康度评分 */
     private int healthScore;
+    private String 精力总结;
+    private List<Map<String, Object>> 业务类别占比;
+    private List<Map<String, Object>> 职责对比;
+    private String 关键洞察;
+    private String 问题诊断与风险预警;
+    private String 精力平衡建议;
 
-    /** 概览总结文字 */
-    private String summaryText;
+    public ReportData() {}
 
-    /** 时间分配环形图数据 */
-    private List<BusinessItem> businessItems;
+    public ReportData(String title, String analyzedPerson, String department, int healthScore,
+                      String 精力总结, List<Map<String, Object>> 业务类别占比,
+                      List<Map<String, Object>> 职责对比,
+                      String 关键洞察, String 问题诊断与风险预警,
+                      String 精力平衡建议) {
+        this.title = title;
+        this.analyzedPerson = analyzedPerson;
+        this.department = department;
+        this.healthScore = healthScore;
+        this.精力总结 = 精力总结;
+        this.业务类别占比 = 业务类别占比;
+        this.职责对比 = 职责对比;
+        this.关键洞察 = 关键洞察;
+        this.问题诊断与风险预警 = 问题诊断与风险预警;
+        this.精力平衡建议 = 精力平衡建议;
+    }
 
-    /** 职责对比折线图数据 */
-    private List<DutyComparison> dutyComparisons;
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    /** 关键洞察 */
-    private String keyInsight;
+    public String getAnalyzedPerson() { return analyzedPerson; }
+    public void setAnalyzedPerson(String analyzedPerson) { this.analyzedPerson = analyzedPerson; }
 
-    /** 问题诊断列表 */
-    private List<ProblemItem> problems;
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
 
-    /** 精力平衡建议列表 */
-    private List<SuggestionItem> suggestions;
+    public int getHealthScore() { return healthScore; }
+    public void setHealthScore(int healthScore) { this.healthScore = healthScore; }
 
-    /** 免责声明 */
-    private String disclaimer;
+    public String get精力总结() { return 精力总结; }
+    public void set精力总结(String 精力总结) { this.精力总结 = 精力总结; }
+
+    public List<Map<String, Object>> get业务类别占比() { return 业务类别占比; }
+    public void set业务类别占比(List<Map<String, Object>> 业务类别占比) { this.业务类别占比 = 业务类别占比; }
+
+    public List<Map<String, Object>> get职责对比() { return 职责对比; }
+    public void set职责对比(List<Map<String, Object>> 职责对比) { this.职责对比 = 职责对比; }
+
+    public String get关键洞察() { return 关键洞察; }
+    public void set关键洞察(String 关键洞察) { this.关键洞察 = 关键洞察; }
+
+    public String get问题诊断与风险预警() { return 问题诊断与风险预警; }
+    public void set问题诊断与风险预警(String 问题诊断与风险预警) { this.问题诊断与风险预警 = 问题诊断与风险预警; }
+
+    public String get精力平衡建议() { return 精力平衡建议; }
+    public void set精力平衡建议(String 精力平衡建议) { this.精力平衡建议 = 精力平衡建议; }
 }
